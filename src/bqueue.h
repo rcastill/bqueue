@@ -1,6 +1,10 @@
 #ifndef BQUEUE_H
 #define BQUEUE_H
 
+#ifdef __cplusplus /* If this is a C++ compiler, use C linkage */
+extern "C" {
+#endif
+
 #include <pthread.h>
 
 struct bqueue_node
@@ -56,5 +60,9 @@ int bqueue_pop(bqueue_t* b, void** data);
  *  See pthread_{mutex,cond}_destroy
  */
 int bqueue_destroy(bqueue_t* b);
+
+#ifdef __cplusplus /* If this is a C++ compiler, end C linkage */
+}
+#endif
 
 #endif /* BQUEUE_H */
