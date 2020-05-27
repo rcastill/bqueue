@@ -5,6 +5,7 @@ int bqueue_init(bqueue_t *b)
 {
     b->front = 0;
     b->back = 0;
+    b->size = 0;
     int pthread_r = 0;
     if ((pthread_r = pthread_mutex_init(&b->mutex, 0)) != 0)
     {
@@ -37,6 +38,7 @@ int bqueue_push(bqueue_t *b, void *data)
     {
         b->front = b->back = n;
     }
+    b->size = b->size + 1;
     if ((pthread_r = pthread_cond_signal(&b->cond)) != 0)
     {
         return pthread_r;
@@ -75,6 +77,7 @@ int bqueue_pop(bqueue_t *b, void **data)
     }
     *data = front->data;
     free(front);
+    b->size = b->size - 1;
     if ((pthread_r = pthread_mutex_unlock(&b->mutex)) != 0)
     {
         return pthread_r;
@@ -100,6 +103,19 @@ int bqueue_destroy(bqueue_t* b)
         return pthread_r;
     }
     if ((pthread_r = pthread_cond_destroy(&b->cond)) != 0) {
+        return pthread_r;
+    }
+    return 0;
+}
+
+int bqueue_size(bqueue_t* b, unsigned long* size)
+{
+    int pthread_r = 0;
+    if ((pthread_r = pthread_mutex_lock(&b->mutex)) != 0) {
+        return pthread_r;
+    }
+    *size = b->size;
+    if ((pthread_r = pthread_mutex_unlock(&b->mutex)) != 0) {
         return pthread_r;
     }
     return 0;

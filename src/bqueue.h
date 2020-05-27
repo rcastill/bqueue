@@ -18,6 +18,7 @@ typedef struct bqueue
 {
     struct bqueue_node *front;
     struct bqueue_node *back;
+    unsigned long size;
     pthread_mutex_t mutex;
     pthread_cond_t cond;
 } bqueue_t;
@@ -60,6 +61,14 @@ int bqueue_pop(bqueue_t* b, void** data);
  *  See pthread_{mutex,cond}_destroy
  */
 int bqueue_destroy(bqueue_t* b);
+
+/*
+ * Thread-safely get queue size.
+ * Sets *size with queue size.
+ * 
+ * Returns 0 on success.
+ */
+int bqueue_size(bqueue_t* b, unsigned long* size);
 
 #ifdef __cplusplus /* If this is a C++ compiler, end C linkage */
 }
